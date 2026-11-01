@@ -1,0 +1,9 @@
+# Normalise line endings in the repository; Windows checkouts get CRLF where tools expect it
+* text=auto
+*.sln text eol=crlf
+*.csproj text eol=crlf
+*.cs text
+*.json text
+*.geojson text -diff linguist-generated
+*.pdf binary
+*.png binary

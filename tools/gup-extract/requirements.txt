@@ -1,0 +1,7 @@
+# Python 3.10+
+pypdf>=6
+pdfplumber>=0.11
+numpy>=1.26
+shapely>=2.0
+pyproj>=3.6
+matplotlib>=3.8   # render_pdf.py only

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>DataFetch</RootNamespace>
+    <AssemblyName>DataFetch</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- never compile files parked for deletion -->
+    <Compile Remove="_to_delete/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Drives a real, visible Chromium window. Install the browser once with the install-browser option (see README). -->
+    <PackageReference Include="Microsoft.Playwright" Version="1.*" />
+  </ItemGroup>
+
+</Project>

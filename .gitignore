@@ -1,0 +1,37 @@
+# ---- secrets ----
+.env
+!.env.example
+
+# ---- collected / downloaded data (other sites' content, may contain personal data) ----
+data/*
+!data/gup/
+data/gup/*
+!data/gup/zones.geojson
+!data/gup/rules.json
+*.tmp
+
+# ---- .NET / Visual Studio ----
+bin/
+obj/
+.vs/
+*.user
+*.suo
+TestResults/
+
+# ---- Node ----
+node_modules/
+node_modules copy/
+npm-debug.log*
+
+# ---- Python (tools/gup-extract) ----
+__pycache__/
+*.pyc
+.venv/
+tools/gup-extract/work/
+tools/gup-extract/out/
+
+# ---- OS / editors ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

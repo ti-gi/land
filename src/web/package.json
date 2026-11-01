@@ -1,0 +1,21 @@
+{
+  "name": "zagreb-gup-map",
+  "version": "1.0.0",
+  "description": "Interactive web map of Zagreb GUP 2025 land-use zones (MapLibre GL JS + Express)",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "compression": "^1.7.5",
+    "express": "^4.21.2",
+    "maplibre-gl": "^6.16.0",
+    "proj4": "^2.12.1"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,678 @@
+{
+ "meta": {
+  "plan": "Generalni urbanisticki plan grada Zagreba (GUP), consolidated text",
+  "version": "Procisceni tekst 16 Oct 2025, incl. amendments SGGZ 16/07, 8/09, 7/13, 9/16, 17/24, 28/25",
+  "note": "Permitted uses extracted from the consolidated GUP text (articles 8–23, 32–33). Verify against the official text before legal use."
+ },
+ "zones": {
+  "S": {
+   "code": "S",
+   "name_hr": "Stambena namjena",
+   "name_en": "Residential",
+   "group": "stambena",
+   "buildability": "gradive",
+   "article": "9",
+   "ancillary_uses": [
+    {
+     "tag": "daily_retail",
+     "label_hr": "prodavaonice robe dnevne potrošnje",
+     "condition": "max 500 m2 GBP"
+    },
+    {
+     "tag": "preschool_school",
+     "label_hr": "predškolske ustanove, škole"
+    },
+    {
+     "tag": "health_social",
+     "label_hr": "ustanove zdravstvene zaštite i socijalne skrbi"
+    },
+    {
+     "tag": "quiet_craft",
+     "label_hr": "tihi obrti"
+    },
+    {
+     "tag": "religious",
+     "label_hr": "vjerske zajednice"
+    },
+    {
+     "tag": "culture",
+     "label_hr": "kulturni sadržaji"
+    },
+    {
+     "tag": "office",
+     "label_hr": "poslovni prostori - uredi"
+    },
+    {
+     "tag": "diplomatic",
+     "label_hr": "diplomatska predstavništva (s rezidencijalnom građevinom)"
+    },
+    {
+     "tag": "sport_rec",
+     "label_hr": "manji sportsko-rekreativni sadržaji"
+    },
+    {
+     "tag": "park_playground",
+     "label_hr": "parkovi i dječja igrališta"
+    }
+   ],
+   "limits": [
+    "Ancillary content within a residential building: max 150 m2 GBP per plot for individual and low-rise; max 10% of GBP for high-rise (3)",
+    "In individual/low zones ancillary content may be in a separate auxiliary building (3)",
+    "Existing ancillary content above limits may stay, without enlargement (3)"
+   ],
+   "separate_plot_uses": {
+    "any_size": [
+     "predškolske ustanove",
+     "škole",
+     "zdravstvene ustanove",
+     "domovi umirovljenika",
+     "zgrade za kulturu",
+     "manji parkovi"
+    ],
+    "up_to_1_ha": [
+     "prodavaonice robe dnevne potrošnje",
+     "vjerske građevine",
+     "manje elektroenergetske i komunalne građevine",
+     "igrališta",
+     "sportsko-rekreacijske površine",
+     "diplomatska predstavništva"
+    ]
+   },
+   "prohibited": [
+    "proizvodne građevine",
+    "skladišta",
+    "servisi",
+    "ugostiteljstvo",
+    "sadržaji koji bukom, mirisom i prometom ometaju stanovanje"
+   ],
+   "prohibited_note": "Existing prohibited uses may stay without expansion, tending to conversion (6)."
+  },
+  "M0": {
+   "code": "M0",
+   "name_hr": "Mješovita namjena gradskog središta",
+   "name_en": "Mixed - city centre",
+   "group": "mjesovita",
+   "buildability": "gradive",
+   "article": "10.a",
+   "primary": "balanced mix of residential, residential-business, business and public uses; single-use buildings allowed",
+   "permitted_uses": [
+    "stambena, stambeno-poslovna, poslovna, javna namjena",
+    "gradske robne kuće, trgovački sadržaji",
+    "predškolske ustanove, škole, visokoškolske i znanstvene ustanove",
+    "zdravstvo i socijalna skrb",
+    "tihi obrti",
+    "društvene organizacije, kultura, vjerske zajednice",
+    "pošte, banke",
+    "posebna namjena",
+    "sport i rekreacija u manjim dvoranama bez gledališta; sportsko-rekreacijska igrališta",
+    "poslovni prostori, uredi",
+    "ugostiteljski objekti, hoteli",
+    "garaže za potrebe bloka i javne garaže (if allowed by the decision)",
+    "parkovi, dječja igrališta, tržnice",
+    "manje energetske i komunalne građevine"
+   ],
+   "limits": [
+    "Hotels: max 75 beds (existing larger hotels may stay and be reconstructed without capacity increase; larger hotels only via UPU covering at least one block)",
+    "Block perimeter: conversion of residential buildings to purely business is not possible; conversion to residential-business (ground floor to business/public) is possible"
+   ],
+   "prohibited": [
+    "novi trgovački centri",
+    "obrti koji nisu tihi obrti",
+    "proizvodne građevine",
+    "skladišta",
+    "sadržaji koji zahtijevaju intenzivan promet ili ometaju stanovanje"
+   ],
+   "prohibited_note": "Existing prohibited uses may stay without expansion."
+  },
+  "M1": {
+   "code": "M1",
+   "name_hr": "Mješovita - pretežito stambena namjena",
+   "name_en": "Mixed - predominantly residential",
+   "group": "mjesovita",
+   "buildability": "gradive",
+   "article": "10.b",
+   "primary": "predominantly residential; business uses that do not disturb housing",
+   "permitted_uses": [
+    "prodavaonice robe dnevne potrošnje (max 500 m2 GBP)",
+    "predškolske ustanove, škole",
+    "zdravstvo i socijalna skrb",
+    "tihi obrti",
+    "društvene organizacije, udruge, kultura, vjerske zajednice",
+    "pošte, banke",
+    "posebna namjena",
+    "sport i rekreacija u manjim dvoranama bez gledališta; igrališta",
+    "poslovni prostori, uredi",
+    "ugostiteljski objekti (except night club, night bar, disco club)",
+    "hotel (max 50 beds)",
+    "javne garaže",
+    "parkovi, dječja igrališta, tržnice"
+   ],
+   "limits": [
+    "May be in a mixed building or a separate building in individual/low zones",
+    "In individual/low zones ancillary content: max 30% of GBP on the plot",
+    "Separate plot: preschools, schools, health, retirement homes, culture buildings, parks, playgrounds, sports-recreation; other listed uses on separate plots up to 1 ha",
+    "Retail-only content cannot be phase I of a building"
+   ],
+   "prohibited": [
+    "novi trgovački centri",
+    "obrti s nepovoljnim utjecajem na okoliš",
+    "proizvodne građevine",
+    "građevine za gospodarenje otpadom",
+    "skladišta",
+    "sadržaji koji zahtijevaju intenzivan promet ili ometaju stanovanje"
+   ],
+   "prohibited_note": "Existing non-conforming content may stay without expansion."
+  },
+  "M2": {
+   "code": "M2",
+   "name_hr": "Mješovita - pretežito poslovna namjena",
+   "name_en": "Mixed - predominantly business",
+   "group": "mjesovita",
+   "buildability": "gradive",
+   "article": "11",
+   "primary": "business and residential; ground floor of business and residential-business buildings must be business (offices, shops, hospitality) or public/social use",
+   "permitted_uses": [
+    "stanovanje i prateći sadržaji",
+    "javna i društvena namjena",
+    "tržnice, gradske robne kuće, trgovine, trgovački centri, hoteli",
+    "rad s komplementarnim sadržajima",
+    "sport i rekreacija",
+    "javne garaže i punionice goriva",
+    "parkovi, dječja igrališta",
+    "posebna namjena",
+    "jednonamjenske građevine (poslovne, javne, društvene)"
+   ],
+   "limits": [
+    "Shopping and supply centres: max 10% of parking needs at open ground level, rest within the building"
+   ],
+   "prohibited": [
+    "skladišta kao osnovna namjena",
+    "građevine za gospodarenje otpadom",
+    "građevine za preradu mineralnih sirovina"
+   ]
+  },
+  "D": {
+   "code": "D",
+   "name_hr": "Javna i društvena namjena (sve)",
+   "name_en": "Public and social - all subtypes",
+   "group": "javna_drustvena",
+   "buildability": "uvjetno_gradive",
+   "article": "12",
+   "subtypes": {
+    "D1": "upravna (administrative)",
+    "D2": "socijalna (retirement, student dormitories)",
+    "D3": "zdravstvena (health)",
+    "D4": "predškolska (preschool)",
+    "D5": "školska (school)",
+    "D6": "visoko učilište i znanost, tehnološki parkovi (higher education, science, tech parks)",
+    "D7": "kulturna (culture)",
+    "D8": "vjerska (religious)",
+    "D": "all public/social uses incl. state and city administration, public institutions, political organisations, diplomatic missions with residence, congress centres, sports halls, fire stations"
+   },
+   "permitted_uses": [
+    "građevine javne i društvene namjene i prateći sadržaji",
+    "predškolske i školske namjene on all D subtypes",
+    "hoteli do 100 ležaja as ancillary to administrative, health, religious uses and universities, on separate plots",
+    "parkovi i dječja igrališta",
+    "kiosci i privremene građevine (except preschool and school), per mayor's rulebook"
+   ],
+   "prohibited": [
+    "stambene građevine",
+    "poslovne građevine"
+   ],
+   "notes": [
+    "Existing larger hotels may stay; UPU may reconsider larger hotels",
+    "Exception: Studentski kampus Borongaj allows ancillary service uses on separate plots"
+   ]
+  },
+  "I": {
+   "code": "I",
+   "name_hr": "Proizvodna namjena",
+   "name_en": "Industrial / production",
+   "group": "gospodarska",
+   "buildability": "gradive",
+   "article": "13",
+   "permitted_uses": [
+    "industrijski, obrtnički, zanatski, gospodarski pogoni svih vrsta",
+    "skladišni prostori",
+    "poslovne, upravne, uredske i trgovačke građevine",
+    "prodavaonice, izložbeno-prodajni saloni",
+    "ugostiteljske građevine i građevine za zabavu",
+    "prometne građevine, javne garaže, sportske građevine, rasadnici",
+    "istraživački centri, javne i društvene građevine",
+    "punionice goriva"
+   ],
+   "limits": [
+    "Only economic activities that do not disturb the city environment (13(2)); see art. 25 for environmental restrictions"
+   ]
+  },
+  "K1": {
+   "code": "K1",
+   "name_hr": "Poslovna namjena",
+   "name_en": "Business",
+   "group": "gospodarska",
+   "buildability": "gradive",
+   "article": "13",
+   "permitted_uses": [
+    "poslovni, upravni, uredski, trgovački i uslužni sadržaji",
+    "gradske robne kuće",
+    "proizvodnja bez negativnog utjecaja na okoliš",
+    "komunalno-servisni i prateći skladišni prostori",
+    "hoteli",
+    "same ancillary list as I (shops, hospitality, garages, sports, research, fuel stations)"
+   ],
+   "notes": [
+    "Exception: Kajzerica K1 east of the railway allows URIHO complex",
+    "Exception: remaining K1 zone east of planned road, north of Avenija Dubrovnik, west of Zagrebački velesajam, and the Velesajam area allow residential and residential-business buildings"
+   ]
+  },
+  "K2": {
+   "code": "K2",
+   "name_hr": "Trgovački kompleksi",
+   "name_en": "Large retail complexes",
+   "group": "gospodarska",
+   "buildability": "gradive",
+   "article": "13",
+   "primary": "large shopping centres and large retail operations with significant urban impact",
+   "permitted_uses": [
+    "all K1 uses"
+   ]
+  },
+  "T": {
+   "code": "T",
+   "name_hr": "Ugostiteljsko-turistička namjena",
+   "name_en": "Hospitality and tourism",
+   "group": "gospodarska",
+   "buildability": "gradive",
+   "article": "13",
+   "permitted_uses": [
+    "hoteli",
+    "izletišta",
+    "moteli",
+    "ugostiteljske i sportske građevine",
+    "kongresni centri"
+   ]
+  },
+  "G": {
+   "code": "G",
+   "name_hr": "Gospodarska namjena (sve)",
+   "name_en": "Economic - all subtypes possible",
+   "group": "gospodarska",
+   "buildability": "gradive",
+   "article": "13",
+   "permitted_uses": [
+    "any of I, K1, K2, T"
+   ]
+  },
+  "TR": {
+   "code": "TR",
+   "name_hr": "Tržnica",
+   "name_en": "Market",
+   "group": "gospodarska",
+   "buildability": "not stated in articles read",
+   "article": "8, 11(4)",
+   "notes": [
+    "Listed as 4.6 in art. 8; arranged according to the basic use and site values/protection (art. 11(4))"
+   ]
+  },
+  "R1": {
+   "code": "R1",
+   "name_hr": "Sportsko-rekreacijska namjena - sport s gradnjom",
+   "name_en": "Sport and recreation - with building",
+   "group": "sportsko_rekreacijska",
+   "buildability": "uvjetno_gradive",
+   "article": "14",
+   "permitted_uses": [
+    "sportske dvorane, stadioni, zatvorene i otvorene sportske građevine s ili bez gledališta",
+    "prostori koji upotpunjuju osnovnu namjenu"
+   ],
+   "limits": [
+    "Complementary space: max 30% of total built GBP of the main use (45% in UPU Termalno kupalište Blato)"
+   ],
+   "notes": [
+    "Exception: Dom sportova / Stadion Maksimir zone allows business, retail, public garages, hospitality, hotels, public/social uses, tied to a public architectural competition",
+    "Exception: Mandlova south part allows R1 building"
+   ]
+  },
+  "R2": {
+   "code": "R2",
+   "name_hr": "Sportsko-rekreacijska namjena - sport bez gradnje",
+   "name_en": "Sport and recreation - without building",
+   "group": "sportsko_rekreacijska",
+   "buildability": "uvjetno_gradive",
+   "article": "14",
+   "permitted_uses": [
+    "otvorena igrališta",
+    "manji prateći prostori (garderobe, sanitarije, manji ugostiteljski sadržaji)",
+    "gledališta only as part of terrain design, uncovered"
+   ],
+   "limits": [
+    "Zones under 5 ha: max total ancillary GBP 1000 m2 per 1 ha of landscaped sports area, proportionally less on smaller",
+    "Zones over 5 ha without UPU obligation: Hipodrom 100 m2/ha, Jazbina 400 m2/ha, Krvarić 200 m2/ha",
+    "Zones with UPU obligation: max total GBP of zone 5000 m2",
+    "Open pitches may be covered seasonally; ancillary buildings built at the same time or after the pitches"
+   ]
+  },
+  "Z1": {
+   "code": "Z1",
+   "name_hr": "Javni park",
+   "name_en": "Public park",
+   "group": "javne_zelene",
+   "buildability": "negradive",
+   "article": "15",
+   "notes": [
+    "Building, content and equipment set by urban rules (urbana pravila)",
+    "Exceptions: HNK extension below Trg Republike Hrvatske (underground only); public underground garages at part of Trg dr. Franje Tuđmana and between Matka Talovca and Josipa Hanuša streets",
+    "Existing buildings may stay; energy renovation and reconstruction allowed"
+   ]
+  },
+  "Z2": {
+   "code": "Z2",
+   "name_hr": "Gradske park-šume",
+   "name_en": "City park-forests",
+   "group": "javne_zelene",
+   "buildability": "negradive",
+   "article": "15",
+   "notes": [
+    "Only equipment that strengthens the recreational function; extent decided by forest/nature authorities",
+    "Special regime where in protection system A/B or ecological network (art. 23(3))"
+   ]
+  },
+  "Z3": {
+   "code": "Z3",
+   "name_hr": "Tematski park",
+   "name_en": "Theme park",
+   "group": "javne_zelene",
+   "buildability": "negradive",
+   "article": "15",
+   "limits": [
+    "At least 70% green-blue surfaces (vegetation, natural terrain, water)"
+   ]
+  },
+  "Z4": {
+   "code": "Z4",
+   "name_hr": "Javne gradske površine - tematske zone",
+   "name_en": "Public city areas - thematic zones",
+   "group": "javne_zelene",
+   "buildability": "negradive",
+   "article": "15",
+   "permitted_uses": [
+    "građevine za znanost, kulturu, rekreaciju",
+    "ugostiteljski sadržaji",
+    "manje infrastrukturne građevine",
+    "podzemne garaže"
+   ],
+   "limits": [
+    "Natural terrain share on plot: min 40%",
+    "Max kis (floor-area ratio): 0.2, except minor infrastructure buildings"
+   ]
+  },
+  "Z": {
+   "code": "Z",
+   "name_hr": "Zaštitne zelene površine",
+   "name_en": "Protective green areas",
+   "group": "zastitne_zelene",
+   "buildability": "negradive",
+   "article": "16",
+   "permitted_uses": [
+    "rasadnici",
+    "gradski vrtovi"
+   ],
+   "notes": [
+    "Exceptionally, where urban rules say so: small public/social, hospitality and residential buildings, klijeti, composting sites, pet cemetery, sculptures and memorials",
+    "Existing buildings protected as monuments or named as especially valuable may be kept, reconstructed, renewed per heritage authority"
+   ]
+  },
+  "N": {
+   "code": "N",
+   "name_hr": "Posebna namjena",
+   "name_en": "Special purpose (defence, interior, national bank)",
+   "group": "posebna",
+   "buildability": "uvjetno_gradive",
+   "article": "17",
+   "notes": [
+    "For Ministry of Defence, Ministry of Interior, Croatian National Bank; governed by special regulations; other buildings of national importance possible"
+   ]
+  },
+  "IS": {
+   "code": "IS",
+   "name_hr": "Površine infrastrukturnih sustava",
+   "name_en": "Infrastructure systems",
+   "group": "infrastruktura",
+   "buildability": "uvjetno_gradive",
+   "article": "18",
+   "permitted_uses": [
+    "uređaji za pročišćavanje otpadnih voda, spremnici za vodu, kanalizacija",
+    "transformatorske stanice, toplane i elektrane, obnovljivi izvori energije",
+    "plinske stanice i skladišta",
+    "komutacijske građevine, vodna crpilišta",
+    "građevine za sakupljanje i obradu otpada, komunalne djelatnosti, garaže",
+    "ulična mreža, trgovi, mostovi, parkirališta i garaže",
+    "tramvajska i željeznička mreža, kolodvori, stajališta, spremišta",
+    "biciklističke i pješačke površine, rješenja utemeljena na prirodi",
+    "benzinske postaje i punionice goriva, žičare, tržnice"
+   ],
+   "notes": [
+    "Exceptionally on separate plots: office and ancillary buildings tied to the main activity",
+    "Building over traffic areas only if justified via UPU",
+    "Glavni kolodvor / Trnje railway area: up to 40% mixed predominantly business possible after public competition and UPU"
+   ]
+  },
+  "ZIS": {
+   "code": "ZIS",
+   "name_hr": "Površine zelenog i infrastrukturnog sustava",
+   "name_en": "Combined green and infrastructure system",
+   "group": "infrastruktura",
+   "buildability": "not classified in art. 23(3)",
+   "article": "18.a",
+   "notes": [
+    "Watercourses with protective corridors, public parks and protective green along streams (V3, Z1, Z rules); small recreation areas (R2 rules)",
+    "Linear infrastructure and traffic buildings possible, priority to public, pedestrian, cycling traffic",
+    "Mandatory final provision of road (max 2 lanes) between Ilica and Prilaz baruna Filipovića, and tram network between Ozaljska and Horvaćanska cesta",
+    "No tall vegetation that would block mandatory infrastructure"
+   ]
+  },
+  "GROBLJE": {
+   "code": "GROBLJE",
+   "name_hr": "Groblje",
+   "name_en": "Cemetery",
+   "group": "groblje",
+   "buildability": "uvjetno_gradive",
+   "article": "19",
+   "permitted_uses": [
+    "ukopna mjesta",
+    "crkve, kapele, obredne dvorane, mrtvačnice"
+   ],
+   "notes": [
+    "Existing: Mirogoj with Gaj urni, Miroševec, Šestine, Granešina, Čučerje, Remete, Markuševec, Gračani, Resnik, Stenjevec, Gornje Vrapče, Sveta Klara, Jakuševec",
+    "New cemeteries planned west of Mirogoj and east of Miroševec"
+   ]
+  },
+  "V1": {
+   "code": "V1",
+   "name_hr": "Površine pod vodom",
+   "name_en": "Permanent water surfaces",
+   "group": "vode",
+   "buildability": "negradive",
+   "article": "20",
+   "notes": [
+    "River Sava, standing waters, reservoirs on Medvednica streams",
+    "Floating port structures at Jarun istok, Lanište, Hendrixov most, Most slobode, Most mladosti"
+   ]
+  },
+  "V2": {
+   "code": "V2",
+   "name_hr": "Površine povremeno pod vodom",
+   "name_en": "Periodically flooded surfaces",
+   "group": "vode",
+   "buildability": "negradive",
+   "article": "20",
+   "permitted_uses": [
+    "parkovne površine",
+    "otvorena igrališta za sport i rekreaciju"
+   ],
+   "notes": [
+    "Exceptionally buildings serving the water function, outside the 100-year flood wave and retention"
+   ]
+  },
+  "V3": {
+   "code": "V3",
+   "name_hr": "Vodotok sa zaštitnim koridorom",
+   "name_en": "Watercourse with protective corridor",
+   "group": "vode",
+   "buildability": "negradive",
+   "article": "20",
+   "notes": [
+    "All works on V1, V2, V3 need approval of the competent water authority"
+   ]
+  },
+  "KPRP": {
+   "code": "KPRP",
+   "name_hr": "Koridor posebnog režima potoka",
+   "name_en": "Special-regime stream corridor",
+   "group": "koridori",
+   "buildability": "no building",
+   "article": "6(29), 8",
+   "notes": [
+    "Plot may be formed and natural terrain located within, but no building, auxiliary building, parking or fence"
+   ]
+  },
+  "KPRD": {
+   "code": "KPRD",
+   "name_hr": "Koridor posebnog režima dalekovoda",
+   "name_en": "Special-regime power-line corridor",
+   "group": "koridori",
+   "buildability": "not detailed in articles read",
+   "article": "8"
+  },
+  "M": {
+   "code": "M",
+   "name_hr": "Mješovita namjena",
+   "name_en": "Mixed use",
+   "group": "mjesovita",
+   "buildability": "gradive",
+   "article": "10",
+   "primary": "Na površinama mješovite namjene moguće je graditi i uređivati prostore iz mješovite – pretežito stambene (M1) i mješovite – pretežito poslovne namjene (M2). Namjenu pojedinih dijelova određuje urbanistički plan uređenja (UPU).",
+   "permitted_uses": [
+    "prostori i sadržaji mješovite – pretežito stambene namjene M1 (čl. 10.b)",
+    "prostori i sadržaji mješovite – pretežito poslovne namjene M2 (čl. 11)"
+   ],
+   "notes": [
+    "U niskokonsolidiranim gradskim područjima potrebno je osigurati zelene površine prema člancima 82. i 83. (čl. 10(3))",
+    "Na područjima urbane preobrazbe površine igrališta za djecu određuju se programom za izradu UPU-a (čl. 10(4))",
+    "Iznimno, javna i društvena namjena može biti prevladavajuća unutar pojedinih područja sukladno smjernicama za izradu UPU-a (čl. 10(5))",
+    "Detailed permitted uses and prohibitions: see codes M1 and M2."
+   ]
+  },
+  "V": {
+   "code": "V",
+   "name_hr": "Vode i vodna dobra",
+   "name_en": "Water and water domain",
+   "group": "vode",
+   "buildability": "negradive",
+   "article": "20",
+   "primary": "Površine voda i vodnog dobra: V1 površine pod vodom, V2 površine povremeno pod vodom, V3 vodotok sa zaštitnim koridorom.",
+   "notes": [
+    "Svi zahvati na površinama V1, V2 i V3 moraju biti u skladu s uvjetima nadležnog javnopravnog tijela (čl. 20(8))",
+    "Potoci se uređuju pretežito otvorenog korita; na osobito vrijednim područjima pejsažno, prema načelima renaturalizacije (čl. 20(5))",
+    "Na tekućim i stajaćim vodama i u njihovom okolišu treba očuvati postojeće biljne i životinjske vrste (čl. 20(6))"
+   ]
+  }
+ },
+ "everywhere": {
+  "article": "22",
+  "allowed_everywhere": [
+   "ulice, trgovi, dječja igrališta",
+   "biciklističke površine, pješačke staze, pješačko-biciklistički mostovi",
+   "parkovi",
+   "infrastrukturna mreža",
+   "manje infrastrukturne građevine (trafostanice 10(20)/0,4 kV, punionice za električna vozila)",
+   "spremnici za komunalni otpad",
+   "vatrogasne postaje",
+   "mjerne postaje kvalitete zraka"
+  ],
+  "interim_use_note": "Until the planned use is implemented, open spaces for public use (urban gardens, playgrounds, unpaved parking, dog parks) are allowed without buildings or tall vegetation that would block the plan.",
+  "advertising_note": "Advertising boards and mobile devices allowed in all zones per a separate city decision."
+ },
+ "building_types": {
+  "individualna": {
+   "name_hr": "individualna gradjevina",
+   "max_above_ground_floors": 3,
+   "note": "3rd floor must be attic (potkrovlje) or setback floor (uvuceni kat)",
+   "article": "6(19), 32(5)"
+  },
+  "niska": {
+   "name_hr": "niska gradjevina",
+   "max_above_ground_floors": 4,
+   "note": "4th floor must be attic or setback floor",
+   "article": "6(37), 32(4)"
+  },
+  "visoka": {
+   "name_hr": "visoka gradjevina",
+   "min_above_ground_floors": 4,
+   "note": "at least basement/ground floor + 3 floors",
+   "article": "6(73), 32(3)"
+  },
+  "floor_height_limits_m": {
+   "residential": 3.5,
+   "office": 4.0,
+   "ground_floor_fire_access_exception": 4.5,
+   "article": "6(70)"
+  }
+ },
+ "buildability_classes": {
+  "gradive": {
+   "name_hr": "gradive namjene",
+   "zones": [
+    "S",
+    "M0",
+    "M1",
+    "M2",
+    "G",
+    "I",
+    "K1",
+    "K2",
+    "T"
+   ]
+  },
+  "uvjetno_gradive": {
+   "name_hr": "uvjetno gradive namjene",
+   "zones": [
+    "D",
+    "D1",
+    "D2",
+    "D3",
+    "D4",
+    "D5",
+    "D6",
+    "D7",
+    "D8",
+    "R1",
+    "R2",
+    "N",
+    "IS",
+    "GROBLJE"
+   ]
+  },
+  "negradive": {
+   "name_hr": "negradive namjene",
+   "zones": [
+    "Z1",
+    "Z2",
+    "Z3",
+    "Z4",
+    "Z",
+    "V1",
+    "V2",
+    "V3"
+   ]
+  },
+  "negradive_posebnog_rezima": {
+   "name_hr": "negradive namjene posebnog režima",
+   "zones": [
+    "Z2 within protection system A or B",
+    "Z2 within ecological network area"
+   ]
+  }
+ }
+}

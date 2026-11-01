@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zagreb GUP 2025 – Land Use Map</title>
+  <link rel="stylesheet" href="/vendor/maplibre-gl/maplibre-gl.css">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <button class="icon-btn" id="toggle-legend" aria-label="Show legend" title="Legend">☰</button>
+    <div class="title">
+      <h1>Zagreb GUP 2025</h1>
+      <span class="subtitle">Korištenje i namjena prostora</span>
+    </div>
+    <form class="search" id="search-form" autocomplete="off">
+      <input type="search" id="search-input" placeholder="Search address or place in Zagreb…" aria-label="Search address">
+      <ul class="search-results" id="search-results" hidden></ul>
+    </form>
+  </header>
+
+  <main class="layout">
+    <aside class="panel legend" id="legend-panel">
+      <section class="listings-box" id="listings-box" hidden>
+        <div class="panel-head">
+          <label class="listings-toggle"><input type="checkbox" id="listings-on" checked><h2>Land for sale</h2></label>
+          <span class="listings-count" id="listings-count"></span>
+        </div>
+        <div class="listings-body" id="listings-body">
+          <div class="ppm-title">Price per m²</div>
+          <div id="ppm-list" class="ppm-list"></div>
+          <div class="pin-key">
+            <span><i class="pin solid"></i>exact pin</span>
+            <span><i class="pin ring"></i>area only</span>
+            <span><i class="pin stack"></i>several ads, one pin</span>
+          </div>
+          <label class="check"><input type="checkbox" id="listings-approx" checked> Show approximate locations</label>
+          <label class="check" id="listings-removed-row" hidden><input type="checkbox" id="listings-removed"> Show ads no longer listed</label>
+          <p class="legend-foot" id="listings-foot"></p>
+        </div>
+      </section>
+
+      <div class="panel-head">
+        <h2>Zones</h2>
+        <div class="btn-row">
+          <button class="text-btn" id="all-on">All</button>
+          <button class="text-btn" id="all-off">None</button>
+        </div>
+      </div>
+      <label class="opacity">
+        <span>Opacity</span>
+        <input type="range" id="opacity" min="0" max="1" step="0.05" value="0.75">
+      </label>
+      <div id="legend-list" class="legend-list"></div>
+      <p class="legend-foot" id="legend-foot"></p>
+    </aside>
+
+    <div id="map" class="map"></div>
+
+    <aside class="panel details" id="details-panel" hidden>
+      <div class="panel-head">
+        <h2 id="details-title">Zone details</h2>
+        <button class="icon-btn" id="close-details" aria-label="Close details">✕</button>
+      </div>
+      <div id="details-body" class="details-body"></div>
+    </aside>
+  </main>
+
+  <div class="status" id="status">Click the map to see the zone and what may be built there.</div>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

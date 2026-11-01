@@ -1,0 +1,64 @@
+{
+  "_comment": "Synthetic record in the shape of one nekretnine.hr listing-API result (search-list/listings → results[]). All names, numbers and links are made up. The fake API in DataFetch.Tests clones it and varies ids, prices, areas, land types and locations. Keep it in sync with real responses when the API changes (compare with a --probe snapshot).",
+  "realEstate": {
+    "visibility": "premium",
+    "dataType": "list-real-estate",
+    "id": 7000000,
+    "uuid": "00000000-0000-0000-0000-000000000000",
+    "advertiser": {
+      "agency": {
+        "id": 900,
+        "type": "agency",
+        "showOnlyAgentPhone": false,
+        "isPaid": true,
+        "label": "agencija",
+        "displayName": "Agencija Primjer d.o.o.",
+        "showAgentPhone": false,
+        "showLogo": true,
+        "agencyUrl": "https://www.nekretnine.hr/agencije-nekretnina/900/",
+        "phones": [ { "type": "vat", "value": "+385 1 000 0000" } ]
+      },
+      "supervisor": {
+        "displayName": "Ana Primjer",
+        "type": "user",
+        "phones": [ { "type": "mobile", "value": "091 000 0000" } ]
+      },
+      "hasCallNumbers": true
+    },
+    "contract": "sale",
+    "isNew": false,
+    "luxury": false,
+    "price": { "visible": true, "value": 100000, "formattedValue": "€ 100.000", "priceRange": "50.001 - 100.000 &euro;" },
+    "properties": [
+      {
+        "multimedia": { "photos": [], "virtualTours": [], "hasMultimedia": false },
+        "isMain": true,
+        "price": { "visible": true, "value": 100000, "formattedValue": "€ 100.000", "priceRange": "50.001 - 100.000 &euro;" },
+        "surface": "1.000 m²",
+        "typology": { "id": 261, "name": "Građevinsko zemljište" },
+        "typologyGA4Translation": "Terreno edificabile",
+        "caption": "Zemljište",
+        "category": { "id": 24, "name": "Zemljišta" },
+        "description": "",
+        "featureList": [],
+        "ga4features": [],
+        "location": {
+          "address": "",
+          "latitude": 45.8,
+          "longitude": 15.95,
+          "marker": "marker",
+          "region": "Središnja i Sjeverozapadna Hrvatska",
+          "province": "Grad Zagreb",
+          "macrozone": "Sesvete",
+          "microzone": "Kraljevec",
+          "city": "Zagreb",
+          "nation": { "id": "HR", "name": "Croazia" }
+        }
+      }
+    ],
+    "title": "Građevinsko zemljište, Kraljevec, Zagreb",
+    "typology": { "id": 261, "name": "Građevinsko zemljište" }
+  },
+  "seo": { "anchor": "Građevinsko zemljište", "url": "https://www.nekretnine.hr/oglasi/7000000/" },
+  "idGeoHash": "u2mw"
+}

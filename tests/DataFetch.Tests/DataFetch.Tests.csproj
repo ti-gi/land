@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Self-checking test runner for DataFetch: `dotnet run` (from this folder) exits with 0 when all checks pass.
+    It compiles DataFetch's own source files (everything except the Playwright start-up and browser), and replaces
+    the network with in-memory fakes, so it needs no NuGet packages, no browser, no internet and no Python.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>DataFetch.Tests</RootNamespace>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <NoWarn>$(NoWarn);CS8321</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="*.cs" />
+    <Compile Include="../../src/DataFetch/**/*.cs"
+             Exclude="../../src/DataFetch/Program.cs;../../src/DataFetch/Browser/PlaywrightBrowser.cs;../../src/DataFetch/bin/**;../../src/DataFetch/obj/**"
+             LinkBase="DataFetch" />
+    <None Include="../fixtures/**" LinkBase="fixtures" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

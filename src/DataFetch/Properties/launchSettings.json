@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "nekretnine.hr – Collect": { "commandName": "Project" },
+    "nekretnine.hr – Probe": { "commandName": "Project", "commandLineArgs": "--probe" },
+    "nekretnine.hr – Dry run": { "commandName": "Project", "commandLineArgs": "--dry-run" },
+    "Njuškalo – Collect": { "commandName": "Project", "commandLineArgs": "--source njuskalo" },
+    "Njuškalo – Probe": { "commandName": "Project", "commandLineArgs": "--source njuskalo --probe" },
+    "Njuškalo – Collect 10 ads": { "commandName": "Project", "commandLineArgs": "--source njuskalo --max-ads 10" },
+    "Njuškalo – Dry run": { "commandName": "Project", "commandLineArgs": "--source njuskalo --dry-run" },
+    "Install browser (once, Njuškalo only)": { "commandName": "Project", "commandLineArgs": "--install-browser" }
+  }
+}
