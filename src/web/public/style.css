@@ -38,6 +38,11 @@ button { font: inherit; cursor: pointer; }
 .search-results li { padding: 8px 10px; border-radius: 6px; font-size: 13px; cursor: pointer; }
 .search-results li:hover, .search-results li.active { background: #eef3fb; }
 .search-results li.empty { color: var(--muted); cursor: default; }
+.search-results li b { font-weight: 600; }
+.search-results li .secondary { display: block; font-size: 12px; color: var(--muted); }
+.search-results li.attrib { font-size: 11px; color: var(--muted); text-align: right; cursor: default; padding: 4px 10px; }
+.search-results li.attrib:hover { background: transparent; }
+.search input:disabled { opacity: .7; cursor: not-allowed; }
 
 /* ---------- layout ---------- */
 .layout { position: fixed; inset: 56px 0 28px 0; }
@@ -47,8 +52,15 @@ button { font: inherit; cursor: pointer; }
   background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow);
   display: flex; flex-direction: column; overflow: hidden;
 }
-.legend { left: 12px; }
-.details { right: 12px; width: 360px; }
+/* Left column: "Land for sale" at the top, zone / listing details below it down to the bottom */
+.left-col {
+  position: absolute; top: 12px; bottom: 12px; left: 12px; width: 330px; z-index: 3;
+  display: flex; flex-direction: column; gap: 12px; pointer-events: none;   /* the map stays usable in the gaps */
+}
+.left-col > .panel { position: static; width: auto; pointer-events: auto; }
+.left-col > .legend { flex: none; max-height: 45%; overflow: auto; }
+.left-col > .legend:only-child, .left-col > .legend:has(+ .details[hidden]) { max-height: 100%; }
+.left-col > .details { flex: 1 1 auto; min-height: 0; }
 .panel[hidden] { display: none; }
 .panel-head {
   display: flex; align-items: center; justify-content: space-between;
@@ -71,18 +83,39 @@ button { font: inherit; cursor: pointer; }
   display: flex; align-items: center; gap: 8px; padding: 6px; font-size: 12px; font-weight: 600;
   color: var(--muted); text-transform: uppercase; letter-spacing: .03em;
 }
-.fam-head input { margin: 0; }
 .zone-row {
-  display: grid; grid-template-columns: 16px 18px 1fr auto; align-items: center; gap: 8px;
-  padding: 4px 6px; border-radius: 6px; font-size: 13px; cursor: pointer;
+  display: grid; grid-template-columns: 18px 1fr auto; align-items: center; gap: 8px;
+  padding: 4px 6px; border-radius: 6px; font-size: 13px; cursor: default;
 }
-.zone-row:hover { background: var(--bg); }
-.zone-row input { margin: 0; }
 .swatch { width: 18px; height: 14px; border-radius: 3px; border: 1px solid rgba(0, 0, 0, .25); }
 .zone-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .zone-name b { font-weight: 600; margin-right: 4px; }
 .zone-area { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .legend-foot { margin: 0; padding: 8px 14px 12px; font-size: 11px; color: var(--muted); border-top: 1px solid var(--line); }
+
+/* ---------- zones legend (map panel below the background switcher) ---------- */
+.zones-panel {
+  width: 290px; display: flex; flex-direction: column;
+  /* leaves room for: header 56, status bar 28, background switcher ~52, zoom buttons + attribution ~150 */
+  max-height: calc(100vh - 56px - 28px - 52px - 150px);
+  background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
+  font: 13px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink);
+}
+.maplibregl-ctrl-top-right .zones-panel { clear: both; }
+.zones-head { display: flex; align-items: center; gap: 8px; padding: 8px 10px 8px 6px; border-bottom: 1px solid var(--line); }
+.zones-panel.collapsed .zones-head { border-bottom: 0; }
+.zones-title {
+  display: flex; align-items: center; gap: 4px; border: 0; background: transparent; padding: 2px 6px; border-radius: 6px;
+}
+.zones-title:hover { background: var(--bg); }
+.zones-title h2 { font-size: 14px; margin: 0; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.zones-title .chevron { display: inline-block; width: 14px; color: var(--muted); transition: transform .15s; }
+.zones-panel.collapsed .chevron { transform: rotate(-90deg); }
+.show-zones { margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+.show-zones input { margin: 0; }
+.zones-body { display: flex; flex-direction: column; min-height: 0; flex: 1; }
+.zones-panel.collapsed .zones-body { display: none; }
+.zones-panel.off .legend-list, .zones-panel.off .opacity { opacity: .45; }
 
 /* ---------- details ---------- */
 .details-body { overflow: auto; padding: 12px 14px 16px; font-size: 13px; line-height: 1.45; }
@@ -143,45 +176,47 @@ details.everywhere summary { cursor: pointer; font-weight: 600; font-size: 12px;
 .google-attribution .g-copy { white-space: normal; }  /* never truncate Google's copyright text */
 .google-attribution.on-dark { background: rgba(0, 0, 0, .55); color: #fff; }
 
-/* Keep map controls (switcher, zoom, attribution, scale) clear of the side panels */
-.maplibregl-ctrl-top-left, .maplibregl-ctrl-bottom-left { left: 324px; }
-.layout.details-open .maplibregl-ctrl-top-right,
-.layout.details-open .maplibregl-ctrl-bottom-right { right: 384px; }
+/* Keep map controls (zoom, attribution, scale) clear of the side panels */
+.maplibregl-ctrl-top-left, .maplibregl-ctrl-bottom-left { left: 354px; }
+
+/* Zones legend open: it runs from below the background switcher to the bottom of the map,
+   and the zoom buttons + attribution sit just left of it */
+@media (min-width: 821px) {
+  .zones-panel:not(.collapsed) { height: calc(100vh - 56px - 28px - 52px - 12px); max-height: none; }
+  .layout.zones-expanded .maplibregl-ctrl-bottom-right { right: 300px; }
+}
 
 /* ---------- small screens ---------- */
 @media (max-width: 820px) {
   #toggle-legend { display: inline-block; }
   .title .subtitle { display: none; }
   .search { width: auto; flex: 1; }
-  .legend { display: none; left: 8px; right: 8px; width: auto; bottom: auto; max-height: 60%; }
-  .legend.open { display: flex; }
-  .details { left: 8px; right: 8px; width: auto; top: auto; height: 50%; }
+  .left-col { top: 8px; bottom: 8px; left: 8px; right: 8px; width: auto; }
+  .left-col > .legend { display: none; max-height: 60%; }
+  .left-col > .legend.open { display: flex; }
+  .left-col > .details { flex: 0 0 50%; margin-top: auto; }
   .maplibregl-ctrl-top-left, .maplibregl-ctrl-bottom-left { left: 0; }
   .layout.details-open .maplibregl-ctrl-top-right { right: 0; }
   .layout.details-open .maplibregl-ctrl-bottom-right { right: 0; bottom: calc(50% + 16px); }
   .basemap-switcher button { padding: 6px 8px; }
+  .zones-panel { width: min(270px, calc(100vw - 20px)); max-height: calc(100vh - 56px - 28px - 52px - 190px); }
+  .layout.details-open .zones-panel { display: none; }
 }
 
 /* ---------- land for sale ---------- */
-.listings-box { flex: none; border-bottom: 2px solid var(--line); }
+.listings-box { flex: none; }
 .listings-box .panel-head { border-bottom: 0; }
 .listings-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; }
 .listings-toggle input { margin: 0; }
 .listings-count { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .listings-body { padding: 0 14px 4px; }
 .listings-box.off .listings-body { display: none; }
-.ppm-title { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin: 2px 0 4px; }
-.ppm-list { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; }
-.ppm-row { display: grid; grid-template-columns: 14px 12px 1fr auto; align-items: center; gap: 6px; font-size: 12px; cursor: pointer; padding: 2px 0; }
-.ppm-row input { margin: 0; }
-.ppm-row .n { color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
-.dot { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .35); }
-.pin-key { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 8px 0 4px; font-size: 11px; color: var(--muted); }
+.pin-key { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 2px 0 4px; font-size: 11px; color: var(--muted); }
 .pin-key span { display: inline-flex; align-items: center; gap: 5px; }
 .pin { display: inline-block; width: 11px; height: 11px; border-radius: 50%; }
-.pin.solid { background: #3b528b; border: 1.5px solid #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .35); }
-.pin.ring { background: #fff; border: 2.5px solid #3b528b; }
-.pin.stack { background: #3b528b; border: 2.5px solid #1f2328; }
+.pin.solid { background: #1f2328; border: 1.5px solid #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .35); }
+.pin.ring { background: #fff; border: 2.5px solid #1f2328; }
+.pin.stack { width: 14px; height: 14px; background: #1f2328; border: 2.5px solid #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .45); }
 .check { display: flex; align-items: center; gap: 6px; font-size: 12px; margin: 4px 0; cursor: pointer; }
 .check input { margin: 0; }
 .listings-box .legend-foot { border-top: 0; padding: 4px 0 8px; }

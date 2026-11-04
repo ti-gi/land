@@ -3,20 +3,13 @@
 import * as maplibregl from '/vendor/maplibre-gl/maplibre-gl.mjs';
 import { FAMILIES, ZONES, zoneInfo, colorExpression } from './zone-styles.js';
 import { BASEMAPS, BasemapManager, BasemapSwitcher, GoogleAttribution } from './basemaps.js';
+import { GoogleSearch, describeSearchError } from './google-search.js';
 
 const ZAGREB = { center: [15.98, 45.81], zoom: 11.2 };
-const NOMINATIM = 'https://nominatim.openstreetmap.org/search';
 const BASEMAP_PREF = 'gup-basemap';
 
-// Land for sale: colour by price per m² (sequential, light = cheap, dark = expensive)
-const PPM_BUCKETS = [
-  { id: 'b0', label: 'under 75 €', max: 75, color: '#fde725' },
-  { id: 'b1', label: '75–150 €', max: 150, color: '#7ad151' },
-  { id: 'b2', label: '150–300 €', max: 300, color: '#22a884' },
-  { id: 'b3', label: '300–600 €', max: 600, color: '#2a788e' },
-  { id: 'b4', label: '600 € and more', max: Infinity, color: '#414487' },
-  { id: 'none', label: 'no price', color: '#9aa0a6' },
-];
+// Land for sale: all pins in one colour (the zone colours underneath carry the meaning)
+const PIN_COLOR = '#1f2328';
 const LISTING_LAYERS = ['listings-points', 'listings-selected'];
 
 const $ = (id) => document.getElementById(id);
@@ -26,14 +19,14 @@ const fmtDate = (s) => (s ? new Date(s).toLocaleDateString('hr-HR') : '–');
 const fmtArea = (m2) => (m2 >= 10000 ? `${(m2 / 10000).toLocaleString('hr-HR', { maximumFractionDigits: 2 })} ha` : `${Math.round(m2).toLocaleString('hr-HR')} m²`);
 
 let map, stats = {}, rules = null, codes = [];
-const visible = new Set();
 let selectedIds = [], hoverId = null, marker = null;
 let basemaps, switcher, googleAttr, activeGoogle = null, basemapId = null;
+let searchService;
 
 // Land for sale state
 let listings = null;                       // FeatureCollection from /api/listings
 const listingById = new Map();
-const listingView = { on: true, buckets: new Set(PPM_BUCKETS.map((b) => b.id)), approx: true, removed: false };
+const listingView = { on: true, approx: true, removed: false };
 let selectedListingIds = [];
 
 // ---------------------------------------------------------------------------
@@ -50,16 +43,16 @@ async function init() {
     fetch('/api/listings').then((r) => (r.ok ? r.json() : null)).catch(() => null),
   ]);
   codes = Object.keys(stats);
-  codes.forEach((c) => visible.add(c));
   prepareListings();
   buildListingsLegend();
   buildLegend();
 
   basemaps = new BasemapManager({ apiKey: config.googleMapsApiKey, tileBase: config.googleTileBase });
+  searchService = new GoogleSearch(config.googleMapsApiKey);
   let wanted = null;
   try { wanted = localStorage.getItem(BASEMAP_PREF); } catch { /* storage unavailable */ }
   const valid = (id) => BASEMAPS.some((b) => b.id === id && (!b.google || basemaps.hasGoogle));
-  const first = valid(wanted) ? wanted : (basemaps.hasGoogle ? 'google-roadmap' : 'osm');
+  const first = valid(wanted) ? wanted : (basemaps.hasGoogle ? 'google-roadmap' : 'none');
 
   const base = await resolveBasemap(first);
   map = new maplibregl.Map({ container: 'map', style: withZones(base), ...ZAGREB, attributionControl: { compact: true } });
@@ -67,8 +60,9 @@ async function init() {
   switcher = new BasemapSwitcher(basemaps, basemapId, switchBasemap);
   googleAttr = new GoogleAttribution();
   map.addControl(switcher, 'top-right');
-  map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), 'top-right');
+  map.addControl(new ZonesLegendControl(), 'top-right');            // below the background switcher
   map.addControl(googleAttr, 'bottom-right');
+  map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), 'bottom-right');   // above the attribution
   map.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-left');
 
   map.on('load', () => { wireMapEvents(); updateGoogleAttribution(); });
@@ -77,9 +71,9 @@ async function init() {
   wireUi();
 }
 
-// Load a basemap; if it fails, fall back (Google → OSM → plain background)
+// Load a basemap; if it fails, fall back to the plain background
 async function resolveBasemap(id) {
-  const order = [id, 'osm', 'none'].filter((v, i, a) => a.indexOf(v) === i);
+  const order = [id, 'none'].filter((v, i, a) => a.indexOf(v) === i);
   for (const candidate of order) {
     try {
       const base = await basemaps.getStyle(candidate);
@@ -115,15 +109,15 @@ function withZones(base) {
     type: 'geojson', data: '/data/zones.geojson',
     attribution: 'Zones: GUP grada Zagreba, izmjene i dopune 2025.',
   };
-  const filter = ['in', ['get', 'code'], ['literal', [...visible]]];
+  const layout = { visibility: zonesOn ? 'visible' : 'none' };
   const zoneLayers = [
-    { id: 'zones-fill', type: 'fill', source: 'zones', filter,
+    { id: 'zones-fill', type: 'fill', source: 'zones', layout,
       paint: { 'fill-color': colorExpression(codes), 'fill-opacity': Number($('opacity').value) } },
-    { id: 'zones-line', type: 'line', source: 'zones', filter,
+    { id: 'zones-line', type: 'line', source: 'zones', layout,
       paint: { 'line-color': 'rgba(40,40,40,0.45)', 'line-width': ['interpolate', ['linear'], ['zoom'], 11, 0.1, 15, 0.8] } },
   ];
   const highlight = {
-    id: 'zones-highlight', type: 'line', source: 'zones', filter,
+    id: 'zones-highlight', type: 'line', source: 'zones', layout,
     paint: {
       'line-color': ['case', ['boolean', ['feature-state', 'selected'], false], '#d0021b', '#1d5fbf'],
       'line-width': ['case', ['boolean', ['feature-state', 'selected'], false], 3, ['boolean', ['feature-state', 'hover'], false], 2, 0],
@@ -141,17 +135,9 @@ function withZones(base) {
 // ---------------------------------------------------------------------------
 // Land for sale (listings collected by DataFetch from nekretnine.hr)
 // ---------------------------------------------------------------------------
-function bucketOf(ppm) {
-  if (ppm == null || !(ppm > 0)) return 'none';
-  return PPM_BUCKETS.find((b) => b.max !== undefined && ppm < b.max).id;
-}
-
 function prepareListings() {
   if (!listings?.features) { listings = null; return; }
-  for (const f of listings.features) {
-    f.properties.bucket = bucketOf(f.properties.ppm);
-    listingById.set(f.id, f);
-  }
+  for (const f of listings.features) listingById.set(f.id, f);
   // Exact pins are drawn above approximate ones
   listings.features.sort((a, b) => Number(a.properties.precise) - Number(b.properties.precise));
 }
@@ -162,14 +148,13 @@ function shownListings() {
     type: 'FeatureCollection',
     features: (listings?.features || []).filter((f) => {
       const p = f.properties;
-      return v.buckets.has(p.bucket) && (v.approx || p.precise) && (v.removed || !p.removed);
+      return (v.approx || p.precise) && (v.removed || !p.removed);
     }),
   };
 }
 
 function addListingLayers(style) {
   style.sources.listings = { type: 'geojson', data: shownListings(), attribution: 'Listings: nekretnine.hr' };
-  const color = ['match', ['get', 'bucket'], ...PPM_BUCKETS.flatMap((b) => [b.id, b.color]), '#9aa0a6'];
   const stacked = ['>', ['get', 'stack'], 1];
   const radius = (extra) => ['interpolate', ['linear'], ['zoom'],
     10, ['+', ['case', stacked, 4.5, 3.5], extra],
@@ -180,9 +165,10 @@ function addListingLayers(style) {
     { id: 'listings-points', type: 'circle', source: 'listings', layout: { visibility },
       paint: {
         'circle-radius': radius(0),
-        'circle-color': ['case', ['get', 'precise'], color, 'rgba(255,255,255,0.9)'],
-        'circle-stroke-color': ['case', ['get', 'precise'], ['case', stacked, '#1f2328', 'rgba(20,20,20,0.7)'], color],
-        'circle-stroke-width': ['case', ['get', 'precise'], ['case', stacked, 2.5, 1], 2.5],
+        // exact pin: filled; approximate (area only / hidden address): ring; several ads on one pin: bigger, thicker border
+        'circle-color': ['case', ['get', 'precise'], PIN_COLOR, 'rgba(255,255,255,0.9)'],
+        'circle-stroke-color': ['case', ['get', 'precise'], '#ffffff', PIN_COLOR],
+        'circle-stroke-width': ['case', ['get', 'precise'], ['case', stacked, 2.5, 1.5], 2.5],
         'circle-opacity': ['case', ['get', 'removed'], 0.45, 1],
         'circle-stroke-opacity': ['case', ['get', 'removed'], 0.45, 1],
       } },
@@ -208,6 +194,7 @@ function buildListingsLegend() {
   const box = $('listings-box');
   if (!listings) return;
   box.hidden = false;
+  $('legend-panel').hidden = false;
   const meta = listings.meta || {};
   if (meta.missing) {
     $('listings-body').innerHTML = `<p class="legend-foot">No listings yet – run DataFetch (<code>src/DataFetch</code>); it writes <code>${esc(meta.missing)}</code>. Then reload.</p>`;
@@ -215,11 +202,6 @@ function buildListingsLegend() {
     return;
   }
   const active = listings.features.filter((f) => !f.properties.removed);
-  $('ppm-list').innerHTML = PPM_BUCKETS.map((b) => {
-    const n = active.filter((f) => f.properties.bucket === b.id).length;
-    return `<label class="ppm-row"><input type="checkbox" checked data-bucket="${b.id}">
-      <span class="dot" style="background:${b.color}"></span><span>${esc(b.label)}</span><span class="n">${n}</span></label>`;
-  }).join('');
   const removed = listings.features.length - active.length;
   $('listings-removed-row').hidden = removed === 0;
   const parts = [`${meta.source || 'nekretnine.hr'} · building land`,
@@ -233,8 +215,6 @@ function buildListingsLegend() {
       listingView.on = t.checked;
       box.classList.toggle('off', !t.checked);
       LISTING_LAYERS.forEach((id) => map?.getLayer(id) && map.setLayoutProperty(id, 'visibility', t.checked ? 'visible' : 'none'));
-    } else if (t.dataset.bucket) {
-      t.checked ? listingView.buckets.add(t.dataset.bucket) : listingView.buckets.delete(t.dataset.bucket);
     } else if (t.id === 'listings-approx') listingView.approx = t.checked;
     else if (t.id === 'listings-removed') listingView.removed = t.checked;
     refreshListings();
@@ -369,8 +349,23 @@ function debounce(fn, ms) {
 }
 
 // ---------------------------------------------------------------------------
-// Legend & filtering
+// Zones legend (read-only) – a panel on the map below the background switcher
 // ---------------------------------------------------------------------------
+const ZONES_COLLAPSED_PREF = 'gup-zones-collapsed';
+const ZONE_LAYERS = ['zones-fill', 'zones-line', 'zones-highlight'];
+let zonesOn = false;                         // "Show zones" starts off
+
+class ZonesLegendControl {
+  onAdd() {
+    const el = $('zones-panel');
+    el.classList.add('maplibregl-ctrl');
+    // keep map gestures (drag, wheel zoom) out of the panel so its list can scroll
+    ['wheel', 'mousedown', 'touchstart', 'dblclick', 'click'].forEach((ev) => el.addEventListener(ev, (e) => e.stopPropagation()));
+    return el;
+  }
+  onRemove() {}
+}
+
 function buildLegend() {
   const list = $('legend-list');
   list.innerHTML = '';
@@ -383,16 +378,15 @@ function buildLegend() {
     const box = document.createElement('div');
     box.className = 'fam';
     const famArea = famCodes.reduce((s, c) => s + stats[c].area_m2, 0);
-    box.innerHTML = `<label class="fam-head"><input type="checkbox" checked data-fam="${fam.id}">${esc(fam.label)}
-      <span class="zone-area" style="margin-left:auto">${(famArea / 1e6).toFixed(1)} km²</span></label>`;
+    box.innerHTML = `<div class="fam-head">${esc(fam.label)}
+      <span class="zone-area" style="margin-left:auto">${(famArea / 1e6).toFixed(1)} km²</span></div>`;
 
     for (const c of famCodes) {
       const z = zoneInfo(c);
-      const row = document.createElement('label');
+      const row = document.createElement('div');
       row.className = 'zone-row';
       row.title = `${z.hr} – ${z.en}\n${stats[c].count} polygons`;
-      row.innerHTML = `<input type="checkbox" checked data-code="${esc(c)}">
-        <span class="swatch" style="background:${z.color}"></span>
+      row.innerHTML = `<span class="swatch" style="background:${z.color}"></span>
         <span class="zone-name"><b>${esc(c)}</b>${esc(ZONES[c] ? z.hr : 'neodređeno')}</span>
         <span class="zone-area">${(stats[c].area_m2 / 1e6).toFixed(2)}</span>`;
       box.appendChild(row);
@@ -404,42 +398,23 @@ function buildLegend() {
   const n = Object.values(stats).reduce((s, v) => s + v.count, 0);
   $('legend-foot').textContent = `${n.toLocaleString('hr-HR')} polygons · ${(total / 1e6).toFixed(1)} km² (areas in km²). Streets are not zoned in the plan.`;
 
-  list.addEventListener('change', (e) => {
-    const t = e.target;
-    if (t.dataset.code) {
-      t.checked ? visible.add(t.dataset.code) : visible.delete(t.dataset.code);
-      syncFamilyBoxes();
-    } else if (t.dataset.fam) {
-      list.querySelectorAll(`.fam input[data-code]`).forEach((cb) => {
-        if (zoneInfo(cb.dataset.code).fam !== t.dataset.fam) return;
-        cb.checked = t.checked;
-        t.checked ? visible.add(cb.dataset.code) : visible.delete(cb.dataset.code);
-      });
-    }
-    applyFilter();
-  });
+  // Collapsed or open: remembered per browser; on small screens it starts collapsed
+  let collapsed = window.matchMedia('(max-width: 820px)').matches;
+  try { const v = localStorage.getItem(ZONES_COLLAPSED_PREF); if (v !== null) collapsed = v === '1'; } catch { /* storage unavailable */ }
+  setZonesCollapsed(collapsed);
 }
 
-function syncFamilyBoxes() {
-  document.querySelectorAll('input[data-fam]').forEach((fb) => {
-    const boxes = [...document.querySelectorAll('input[data-code]')].filter((cb) => zoneInfo(cb.dataset.code).fam === fb.dataset.fam);
-    const on = boxes.filter((b) => b.checked).length;
-    fb.checked = on === boxes.length;
-    fb.indeterminate = on > 0 && on < boxes.length;
-  });
+function setZonesCollapsed(collapsed) {
+  $('zones-panel').classList.toggle('collapsed', collapsed);
+  document.querySelector('.layout').classList.toggle('zones-expanded', !collapsed);
+  $('zones-collapse').setAttribute('aria-expanded', String(!collapsed));
+  $('zones-collapse').title = collapsed ? 'Show the zones legend' : 'Hide the zones legend';
 }
 
-function setAll(state) {
-  document.querySelectorAll('#legend-list input[type=checkbox]').forEach((cb) => { cb.checked = state; cb.indeterminate = false; });
-  visible.clear();
-  if (state) codes.forEach((c) => visible.add(c));
-  applyFilter();
-}
-
-function applyFilter() {
-  if (!map || !map.getLayer('zones-fill')) return;
-  const filter = ['in', ['get', 'code'], ['literal', [...visible]]];
-  ['zones-fill', 'zones-line', 'zones-highlight'].forEach((id) => map.setFilter(id, filter));
+function setZonesOn(on) {
+  zonesOn = on;
+  $('zones-panel').classList.toggle('off', !on);
+  ZONE_LAYERS.forEach((id) => map?.getLayer(id) && map.setLayoutProperty(id, 'visibility', on ? 'visible' : 'none'));
 }
 
 // ---------------------------------------------------------------------------
@@ -535,36 +510,126 @@ function everywhereBlock() {
 }
 
 // ---------------------------------------------------------------------------
-// Address search (OpenStreetMap Nominatim, limited to the Zagreb area)
+// Address search (Google, limited to Zagreb): suggestions while typing, address lookup on Enter
 // ---------------------------------------------------------------------------
-async function search(q) {
-  const params = new URLSearchParams({
-    q, format: 'jsonv2', limit: '6', countrycodes: 'hr', 'accept-language': 'hr',
-    viewbox: '15.75,45.97,16.25,45.70', bounded: '1',
-  });
+let suggestSeq = 0;
+let suggestions = [];
+let activeSuggestion = -1;
+
+function showResults(html) {
   const ul = $('search-results');
-  ul.hidden = false;
-  ul.innerHTML = '<li class="empty">Searching…</li>';
+  ul.innerHTML = html;
+  ul.hidden = !html;
+}
+
+function renderSuggestions(list, emptyText) {
+  suggestions = list;
+  activeSuggestion = -1;
+  if (!list.length) { showResults(emptyText ? `<li class="empty">${esc(emptyText)}</li>` : ''); return; }
+  showResults(list.map((s, i) => `<li data-i="${i}" role="option"><b>${esc(s.main)}</b>`
+    + `${s.secondary ? `<span class="secondary">${esc(s.secondary)}</span>` : ''}</li>`).join('')
+    + '<li class="attrib">Search by Google</li>');
+}
+
+function highlightSuggestion(i) {
+  activeSuggestion = i;
+  $('search-results').querySelectorAll('li[data-i]').forEach((li) => li.classList.toggle('active', Number(li.dataset.i) === i));
+}
+
+let suggestTimer = null;
+function suggestSoon(q) {
+  clearTimeout(suggestTimer);
+  suggestTimer = setTimeout(() => runSuggest(q), 250);
+}
+function cancelSuggest() {
+  clearTimeout(suggestTimer);
+  ++suggestSeq;                                  // answers still on their way are ignored
+}
+
+async function runSuggest(q) {
+  const seq = ++suggestSeq;
   try {
-    const res = await fetch(`${NOMINATIM}?${params}`, { headers: { Accept: 'application/json' } });
-    const hits = await res.json();
-    if (!hits.length) { ul.innerHTML = '<li class="empty">No results in Zagreb</li>'; return; }
-    ul.innerHTML = '';
-    for (const h of hits) {
-      const li = document.createElement('li');
-      li.textContent = h.display_name;
-      li.addEventListener('click', () => {
-        ul.hidden = true;
-        $('search-input').value = h.display_name.split(',').slice(0, 2).join(',');
-        const lon = Number(h.lon), lat = Number(h.lat);
-        map.flyTo({ center: [lon, lat], zoom: Math.max(map.getZoom(), 16) });
-        selectPoint(lon, lat);
-      });
-      ul.appendChild(li);
-    }
-  } catch {
-    ul.innerHTML = '<li class="empty">Search is unavailable (no internet connection?)</li>';
+    const list = await searchService.suggest(q);
+    if (seq === suggestSeq) renderSuggestions(list, 'No suggestions in Zagreb – press Enter to search');
+  } catch (err) {
+    console.warn('Google suggestions failed:', err);
+    if (seq === suggestSeq) showResults(`<li class="empty">${esc(describeSearchError(err))}</li>`);
   }
+}
+
+async function pickSuggestion(i) {
+  const s = suggestions[i];
+  if (!s) return;
+  cancelSuggest();
+  showResults('<li class="empty">Finding the place…</li>');
+  try {
+    const hit = await searchService.locate(s);
+    goToSearchHit(hit);
+  } catch (err) {
+    console.warn('Google place lookup failed:', err);
+    showResults(`<li class="empty">${esc(describeSearchError(err))}</li>`);
+  }
+}
+
+async function geocodeSearch(q) {
+  cancelSuggest();
+  showResults('<li class="empty">Searching…</li>');
+  try {
+    const hits = await searchService.geocode(q);
+    if (!hits.length) { showResults('<li class="empty">No results in Zagreb</li>'); return; }
+    if (hits.length === 1) { goToSearchHit(hits[0]); return; }
+    suggestions = hits.map((h) => ({ main: h.label, secondary: '', hit: h }));
+    showResults(hits.map((h, i) => `<li data-i="${i}">${esc(h.label)}</li>`).join('') + '<li class="attrib">Search by Google</li>');
+  } catch (err) {
+    console.warn('Google geocoding failed:', err);
+    showResults(`<li class="empty">${esc(describeSearchError(err))}</li>`);
+  }
+}
+
+function goToSearchHit({ lat, lon, label }) {
+  showResults('');
+  suggestions = [];
+  activeSuggestion = -1;
+  $('search-input').value = label.replace(/, \d{5},? Zagreb.*$|, Hrvatska$/u, '');
+  map.flyTo({ center: [lon, lat], zoom: Math.max(map.getZoom(), 16) });
+  selectPoint(lon, lat);
+}
+
+function wireSearch() {
+  const input = $('search-input');
+  if (!searchService.available) {
+    input.disabled = true;
+    input.placeholder = 'Address search needs a Google Maps key (src/web/.env)';
+    return;
+  }
+  input.addEventListener('input', () => {
+    activeSuggestion = -1;                      // typing makes Enter search the text, not an old highlight
+    const q = input.value.trim();
+    if (q.length < 3) { cancelSuggest(); showResults(''); return; }
+    suggestSoon(q);
+  });
+  input.addEventListener('keydown', (e) => {
+    const n = $('search-results').querySelectorAll('li[data-i]').length;
+    if (e.key === 'ArrowDown' && n) { e.preventDefault(); highlightSuggestion((activeSuggestion + 1) % n); }
+    else if (e.key === 'ArrowUp' && n) { e.preventDefault(); highlightSuggestion((activeSuggestion - 1 + n) % n); }
+    else if (e.key === 'Escape') showResults('');
+  });
+  $('search-results').addEventListener('click', (e) => {
+    const li = e.target.closest('li[data-i]');
+    if (!li) return;
+    const s = suggestions[Number(li.dataset.i)];
+    if (s?.hit) goToSearchHit(s.hit); else pickSuggestion(Number(li.dataset.i));
+  });
+  $('search-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (activeSuggestion >= 0) {
+      const s = suggestions[activeSuggestion];
+      if (s?.hit) goToSearchHit(s.hit); else pickSuggestion(activeSuggestion);
+      return;
+    }
+    const q = input.value.trim();
+    if (q.length > 2) geocodeSearch(q);
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -574,8 +639,12 @@ function wireUi() {
   $('opacity').addEventListener('input', (e) => {
     if (map.getLayer('zones-fill')) map.setPaintProperty('zones-fill', 'fill-opacity', Number(e.target.value));
   });
-  $('all-on').addEventListener('click', () => setAll(true));
-  $('all-off').addEventListener('click', () => setAll(false));
+  $('zones-on').addEventListener('change', (e) => setZonesOn(e.target.checked));
+  $('zones-collapse').addEventListener('click', () => {
+    const collapsed = !$('zones-panel').classList.contains('collapsed');
+    setZonesCollapsed(collapsed);
+    try { localStorage.setItem(ZONES_COLLAPSED_PREF, collapsed ? '1' : '0'); } catch { /* storage unavailable */ }
+  });
   $('close-details').addEventListener('click', () => {
     $('details-panel').hidden = true;
     document.querySelector('.layout').classList.remove('details-open');
@@ -586,11 +655,7 @@ function wireUi() {
   });
   $('toggle-legend').addEventListener('click', () => $('legend-panel').classList.toggle('open'));
 
-  $('search-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const q = $('search-input').value.trim();
-    if (q.length > 2) search(q);
-  });
+  wireSearch();
   document.addEventListener('click', (e) => {
     if (!$('search-form').contains(e.target)) $('search-results').hidden = true;
   });

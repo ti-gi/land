@@ -1,5 +1,4 @@
-// Background maps: Google Maps Platform Map Tiles API (roadmap / satellite / terrain),
-// OpenStreetMap via OpenFreeMap (free, no key), or none.
+// Background maps: Google Maps Platform Map Tiles API (roadmap / satellite / terrain), or none.
 //
 // Google 2D tiles need a session token: POST /v1/createSession?key=…  → { session, expiry }.
 // Tiles are then requested as /v1/2dtiles/{z}/{x}/{y}?session=…&key=…
@@ -11,11 +10,9 @@ export const BASEMAPS = [
   { id: 'google-roadmap', label: 'Map', title: 'Google Maps – roadmap', google: 'roadmap' },
   { id: 'google-satellite', label: 'Satellite', title: 'Google Maps – satellite', google: 'satellite' },
   { id: 'google-terrain', label: 'Terrain', title: 'Google Maps – terrain', google: 'terrain' },
-  { id: 'osm', label: 'OSM', title: 'OpenStreetMap (OpenFreeMap, no key needed)' },
   { id: 'none', label: 'None', title: 'No background map' },
 ];
 
-const OSM_STYLE_URL = 'https://tiles.openfreemap.org/styles/positron';
 const PLAIN_STYLE = { version: 8, sources: {}, layers: [{ id: 'bg', type: 'background', paint: { 'background-color': '#f2efe9' } }] };
 const ZAGREB_BOUNDS = { north: 45.97, south: 45.70, east: 16.25, west: 15.75 };
 
@@ -100,16 +97,6 @@ export class BasemapManager {
           layers: [{ id: 'google', type: 'raster', source: 'google' }],
         },
       };
-    }
-
-    if (def.id === 'osm') {
-      const ctrl = new AbortController();
-      const t = setTimeout(() => ctrl.abort(), 6000);
-      try {
-        const res = await fetch(OSM_STYLE_URL, { signal: ctrl.signal });
-        if (!res.ok) throw new Error(res.status);
-        return { google: null, labelsOnTop: true, style: await res.json() };
-      } finally { clearTimeout(t); }
     }
 
     return { google: null, labelsOnTop: false, style: structuredClone(PLAIN_STYLE) };

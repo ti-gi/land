@@ -63,3 +63,14 @@ with a new plan edition and the web map needs them to start.
 ### 12. .NET 8 for now (Oct 2026)
 Chosen so the project opens in Visual Studio 2022. .NET 8 support ends **10 November 2026**; moving to
 `net10.0` needs Visual Studio 2026 and no code changes.
+
+### 13. Google is the only background map (4 Nov 2026)
+OpenStreetMap was removed from the background choices at the owner's request. Backgrounds are Google Map/Satellite/
+Terrain through the **Map Tiles API** (must be enabled in the key's Google Cloud project) or none. Without a key, or
+if Google fails, the zones show on a plain background. MapLibre stays the map engine (replaces part of decision 3).
+
+### 14. Address search uses Google (4 Nov 2026)
+Replaces OpenStreetMap Nominatim at the owner's request. Suggestions while typing come from Places API (New)
+autocomplete (billed per session, which ends when a suggestion is picked); Enter on typed text uses Geocoding.
+Both run in the browser through the Maps JavaScript API with the same referrer-restricted key – Google's web-service
+endpoints don't accept referrer-restricted keys, so there is no server-side proxy. Results are limited to Zagreb.

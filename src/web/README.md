@@ -21,16 +21,17 @@ Use `npm run dev` to restart automatically when you edit `server.js`, or set ano
 
 The background switcher (top right) offers Google roadmap, satellite and terrain via the
 [Google Maps Platform Map Tiles API](https://developers.google.com/maps/documentation/tile/2d-tiles-overview),
-plus OpenStreetMap (free, no key) and no background.
+plus no background.
 
 1. In [Google Cloud Console](https://console.cloud.google.com/), create or pick a project, link a billing account,
-   and enable **Map Tiles API**.
+   and enable **Map Tiles API** (backgrounds) plus **Maps JavaScript API**, **Places API (New)** and
+   **Geocoding API** (address search).
 2. Create an API key. Restrict it:
    - *Application restrictions* → **Websites (HTTP referrers)**: `http://localhost:3000/*` (add your real domain later)
-   - *API restrictions* → **Map Tiles API** only
+   - *API restrictions* → those four APIs only
 3. Copy `.env.example` to `.env` and set `GOOGLE_MAPS_API_KEY=your-key`, then restart `npm start`.
 
-Without a key the Google buttons are greyed out and OpenStreetMap is used.
+Without a key the Google buttons are greyed out and the zones show on a plain background.
 The key is used by the browser to load tiles, so it is visible to visitors – that is why the restrictions matter.
 Google bills Map Tiles API usage per tile request (with a free monthly allowance); check
 [current pricing](https://developers.google.com/maps/billing-and-pricing/pricing) and set a budget alert.
@@ -42,14 +43,14 @@ Google Maps logo from Google's brand resources.
 
 DataFetch writes `data/listings/listings-nekretnine.json` (repository root), which this server reads directly
 (another file: set `LISTINGS_FILE` in `.env`). The map then shows
-building land for sale in Zagreb as pins coloured by price per m²:
+building land for sale in Zagreb as dark pins (one colour – the zone colours underneath carry the meaning):
 
 - **filled pin** – the advertiser placed an exact pin;
 - **ring** – approximate: only the neighbourhood centre (or the address is hidden), so the GUP zone at that point is
   *not* necessarily the plot's zone;
-- **dark outline** – several ads share the same pin.
+- **bigger pin, thick white border** – several ads share the same pin.
 
-The "Land for sale" box in the left panel switches the layer, the price classes, approximate pins and ads no longer
+The "Land for sale" box in the left panel switches the layer, approximate pins and ads no longer
 listed on/off. Click a pin for the listing(s) there, a link to the ad, and the GUP zone and its rules at that point.
 The server re-reads the file when it changes – after a new DataFetch run just reload the page.
 `GET /api/listings` returns the pins as GeoJSON.
@@ -57,11 +58,16 @@ The server re-reads the file when it changes – after a new DataFetch run just 
 ## What it does
 
 - Colours all 4,457 zone polygons (full detail, ~0.1 m) by GUP code (S, M1, M2, D5, Z1, …).
-- Legend grouped by family; switch codes or whole groups on and off; adjust opacity.
+- Zones legend on the right, below the background switcher: colours and areas per code, grouped by family
+  (read-only), a "Show zones" switch, opacity, and collapsible (the choice is remembered in the browser).
+  When open it runs down to the bottom of the map.
+- Zone and listing details open on the left, below "Land for sale".
 - Click anywhere (or search an address) to see the zone, its area, and the permitted uses,
   limits and prohibitions from the GUP text, with the article reference.
 - Coordinates shown in WGS84 and HTRS96/TM (EPSG:3765).
-- Background: Google Maps (map / satellite / terrain, needs an API key) or OpenStreetMap. Address search: OpenStreetMap Nominatim.
+- Background: Google Maps (map / satellite / terrain, needs an API key) or none.
+- Address search: Google – suggestions while typing (Places API (New)), Enter looks up the typed address
+  (Geocoding API); limited to the City of Zagreb. Disabled without a key.
   Both need internet; without it the zones still display on a plain background.
 
 ## API
@@ -80,7 +86,7 @@ server.js              Express server, .env loading, point-lookup API
 .env.example           Template for your Google Maps API key
 public/index.html      Page layout
 public/app.js          Map logic (vanilla JS)
-public/basemaps.js     Background maps: Google Map Tiles API, OpenStreetMap, none
+public/basemaps.js     Background maps: Google Map Tiles API, none
 public/zone-styles.js  Zone colours and names
 public/style.css       Styling
 ../../data/gup/zones.geojson   Zone polygons (WGS84, ~13 MB, ~3 MB gzipped download) – made by tools/gup-extract

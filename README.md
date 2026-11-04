@@ -3,7 +3,7 @@
 What may be built where in Zagreb – and which building land is for sale.
 
 - **Web map** (`src/web`) – every zone of the city's urban plan (GUP 2025) with what may be built there, plus
-  building land currently for sale, coloured by price per m².
+  building land currently for sale.
 - **DataFetch** (`src/DataFetch`) – collects building-land listings for the City of Zagreb from nekretnine.hr
   (and optionally Njuškalo) into `data/listings/`.
 - **gup-extract** (`tools/gup-extract`) – turns the plan's map PDF and text into `data/gup/zones.geojson` and

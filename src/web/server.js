@@ -203,5 +203,5 @@ app.listen(PORT, () => {
     : `No listings file at ${path.relative(__dirname, LISTINGS_FILE)} – the "Land for sale" layer stays empty`);
   console.log(GOOGLE_MAPS_API_KEY
     ? 'Google Maps background enabled (Map Tiles API)'
-    : 'No GOOGLE_MAPS_API_KEY in .env – Google backgrounds disabled, OpenStreetMap is used instead');
+    : 'No GOOGLE_MAPS_API_KEY in .env – Google backgrounds disabled, plain background only');
 });

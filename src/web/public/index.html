@@ -21,15 +21,14 @@
   </header>
 
   <main class="layout">
-    <aside class="panel legend" id="legend-panel">
+    <div class="left-col">
+    <aside class="panel legend" id="legend-panel" hidden>
       <section class="listings-box" id="listings-box" hidden>
         <div class="panel-head">
           <label class="listings-toggle"><input type="checkbox" id="listings-on" checked><h2>Land for sale</h2></label>
           <span class="listings-count" id="listings-count"></span>
         </div>
         <div class="listings-body" id="listings-body">
-          <div class="ppm-title">Price per m²</div>
-          <div id="ppm-list" class="ppm-list"></div>
           <div class="pin-key">
             <span><i class="pin solid"></i>exact pin</span>
             <span><i class="pin ring"></i>area only</span>
@@ -40,24 +39,9 @@
           <p class="legend-foot" id="listings-foot"></p>
         </div>
       </section>
-
-      <div class="panel-head">
-        <h2>Zones</h2>
-        <div class="btn-row">
-          <button class="text-btn" id="all-on">All</button>
-          <button class="text-btn" id="all-off">None</button>
-        </div>
-      </div>
-      <label class="opacity">
-        <span>Opacity</span>
-        <input type="range" id="opacity" min="0" max="1" step="0.05" value="0.75">
-      </label>
-      <div id="legend-list" class="legend-list"></div>
-      <p class="legend-foot" id="legend-foot"></p>
     </aside>
 
-    <div id="map" class="map"></div>
-
+    <!-- Zone / listing details: the free space below "Land for sale" -->
     <aside class="panel details" id="details-panel" hidden>
       <div class="panel-head">
         <h2 id="details-title">Zone details</h2>
@@ -65,6 +49,28 @@
       </div>
       <div id="details-body" class="details-body"></div>
     </aside>
+    </div>
+
+    <!-- Zones legend: placed on the map below the background switcher (see ZonesLegendControl in app.js) -->
+    <section class="zones-panel off" id="zones-panel" aria-label="Zones legend">
+      <div class="zones-head">
+        <button type="button" class="zones-title" id="zones-collapse" aria-expanded="true" aria-controls="zones-body">
+          <span class="chevron" aria-hidden="true">▾</span><h2>Zones</h2>
+        </button>
+        <label class="show-zones"><input type="checkbox" id="zones-on"> Show zones</label>
+      </div>
+      <div class="zones-body" id="zones-body">
+        <label class="opacity">
+          <span>Opacity</span>
+          <input type="range" id="opacity" min="0" max="1" step="0.05" value="0.75">
+        </label>
+        <div id="legend-list" class="legend-list"></div>
+        <p class="legend-foot" id="legend-foot"></p>
+      </div>
+    </section>
+
+    <div id="map" class="map"></div>
+
   </main>
 
   <div class="status" id="status">Click the map to see the zone and what may be built there.</div>

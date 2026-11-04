@@ -74,6 +74,9 @@ VS solution: `src/DataFetch/DataFetch.sln` (DataFetch + DataFetch.Tests).
   zone group, labels Arial-Bold 8–10 pt. Georeference: `/VP` named `GUP2024`, `/Measure` GPTS/LPTS → HTRS96/TM
   **EPSG:3765**. pdfplumber `y0/y1` are bottom-up – convert label y exactly once. Call `page.close()` per sheet
   (otherwise ~6 GB RAM).
+- **Google APIs used by the web map** (one browser key, `src/web/.env`): Map Tiles API (backgrounds, via MapLibre),
+  Maps JavaScript API + Places API (New) + Geocoding API (address search, `public/google-search.js`).
+  Autocomplete uses a session token that ends when a suggestion is picked (cheaper billing).
 - **MapLibre GL JS v6 is ESM-only**: `import * as maplibregl from '/vendor/maplibre-gl/maplibre-gl.mjs'`.
   Google Map Tiles: create a session per map type; terrain needs `layerTypes: ["layerRoadmap"]`; show the
   attribution from `/tile/v1/viewport`.
@@ -84,6 +87,6 @@ VS solution: `src/DataFetch/DataFetch.sln` (DataFetch + DataFetch.Tests).
 
 - Test changes to collectors against the fakes in `tests/` first; touch the real sites only with `--probe` or a
   normal run started by the owner. When a site changes, update the fake from a `--probe` snapshot, then the parser.
-- Keep both apps runnable without a key or internet where possible (OSM fallback, empty listings layer).
+- Keep both apps runnable without a key or internet where possible (plain background without a Google key, empty listings layer).
 - Small, focused commits; message says what and why. Don't push or rewrite history unless asked.
 - After changing the web app, check it in a browser (zones render, click a zone, click a listing pin).
