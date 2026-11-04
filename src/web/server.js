@@ -23,7 +23,7 @@ if (fs.existsSync(envFile)) {
 const PORT = process.env.PORT || 3000;
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY || '';
 const GOOGLE_TILE_BASE = process.env.GOOGLE_TILE_BASE || 'https://tile.googleapis.com';
-// Data lives in the repository's data/ folder: gup/ (committed: zones + rules) and listings/ (DataFetch output, git-ignored)
+// GUP zones + rules live in the repository's data/gup/ folder (committed)
 const REPO_DATA = path.resolve(__dirname, '../../data');
 const DATA_DIR = path.resolve(__dirname, process.env.GUP_DATA_DIR || path.join(REPO_DATA, 'gup'));
 
@@ -81,7 +81,8 @@ function rulesFor(code) {
 // Land for sale – listings collected by DataFetch (nekretnine.hr)
 // The file is re-read whenever it changes, so a new DataFetch run shows up after a page reload.
 // ---------------------------------------------------------------------------
-const LISTINGS_FILE = path.resolve(__dirname, process.env.LISTINGS_FILE || path.join(REPO_DATA, 'listings', 'listings-nekretnine.json'));
+// Land for sale: this app's own data folder – copied here by hand from DataFetch's output (git-ignored)
+const LISTINGS_FILE = path.resolve(__dirname, process.env.LISTINGS_FILE || path.join('data', 'listings-nekretnine.json'));
 const UTILITY_NAMES = { 'illuminazione pubblica': 'javna rasvjeta', recintato: 'ograđeno' };
 let listingsCache = { mtimeMs: -1, body: null };
 

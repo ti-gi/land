@@ -9,6 +9,7 @@ data/gup/*
 !data/gup/zones.geojson
 !data/gup/rules.json
 *.tmp
+src/web/data/
 
 # ---- .NET / Visual Studio ----
 bin/

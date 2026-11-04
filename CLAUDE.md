@@ -7,13 +7,13 @@ Owner: Tomislav. Working language with the owner: English; data and UI labels ar
 
 | Path | What | Stack |
 |---|---|---|
-| `src/DataFetch/` | Collects land-for-sale listings → `data/listings/*.json` | .NET 8 console app, Playwright (Njuškalo only) |
+| `src/DataFetch/` | Collects land-for-sale listings → `data/listings/*.json` (independent of `src/web`) | .NET 8 console app, Playwright (Njuškalo only) |
 | `src/web/` | Web map: GUP zones + rules + listings | Node 18+, Express, MapLibre GL JS v6 (ESM), vanilla JS |
 | `tools/gup-extract/` | GUP 2025 PDF → `data/gup/zones.geojson`, plan text → `data/gup/rules.json` | Python 3.10+, pypdf, pdfplumber, shapely, pyproj |
 | `tests/DataFetch.Tests/` | Self-checking tests with in-memory fakes of both sites | .NET 8, no packages |
 | `tests/fixtures/` | Synthetic sample data for the fakes | |
 | `data/gup/` | zones + rules (committed) | |
-| `data/listings/`, `data/datafetch/` | collected data, snapshots, browser profile (**git-ignored**) | |
+| `src/web/data/`, `data/listings/`, `data/datafetch/` | collected data, snapshots, browser profile (**git-ignored**) | |
 | `docs/data-contract.md` | Every shared file format and the web API – **read before changing any field** | |
 | `docs/decisions.md` | Why things are as they are – add an entry for new decisions | |
 
@@ -24,6 +24,7 @@ Owner: Tomislav. Working language with the owner: English; data and UI labels ar
 dotnet build
 dotnet run -- --probe                 # nekretnine.hr: first page only, writes a snapshot
 dotnet run                            # nekretnine.hr: full scan → data/listings/listings-nekretnine.json
+# then copy it by hand to src/web/data/listings-nekretnine.json for the map
 dotnet run -- --source njuskalo --probe
 dotnet run -- --install-browser       # once, Njuškalo only
 
@@ -49,10 +50,11 @@ VS solution: `src/DataFetch/DataFetch.sln` (DataFetch + DataFetch.Tests).
 3. **No personal data.** Never store seller/agent names or phone numbers; mask phones/e-mails in free text
    (`NjuskaloParser.MaskContacts`); strip `supervisor`, `phones`, `agentPhone`, `email` from raw API records
    (`NekretnineCollector.Sanitize`). Agency (business) names are fine. Tests check this – keep them.
-4. **Never commit** `.env`, anything under `data/listings/` or `data/datafetch/`, real page snapshots or real API
+4. **Never commit** `.env`, anything under `src/web/data/`, `data/listings/` or `data/datafetch/`, real page snapshots or real API
    responses. Test fixtures are synthetic only.
 5. **Collected listings are not republished.** Anything public-facing needs the sites' permission or a licensed feed.
-6. **DataFetch stores raw data only** – GUP matching belongs in `src/web` (decision 8).
+6. **DataFetch stores raw data only** – GUP matching belongs in `src/web` (decision 8). DataFetch and the web map
+   are independent: DataFetch never writes into `src/web`; the owner copies the listings file over (decision 15).
 7. **Shared formats change together**: producer + consumer + `docs/data-contract.md` + tests in one commit.
    DataFetch writes camelCase JSON and omits null fields.
 8. Show GUP information as **not legally binding**; the official plan and any UPU decide.

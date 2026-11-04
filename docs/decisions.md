@@ -74,3 +74,8 @@ Replaces OpenStreetMap Nominatim at the owner's request. Suggestions while typin
 autocomplete (billed per session, which ends when a suggestion is picked); Enter on typed text uses Geocoding.
 Both run in the browser through the Maps JavaScript API with the same referrer-restricted key – Google's web-service
 endpoints don't accept referrer-restricted keys, so there is no server-side proxy. Results are limited to Zagreb.
+
+### 15. DataFetch and the web map are separate; listings are copied by hand (4 Nov 2026)
+DataFetch writes only to the repository's `data/listings/` and never into `src/web`. The map reads
+`src/web/data/listings-nekretnine.json` (git-ignored); the owner copies a new DataFetch result there when they want
+the map updated. Keeps the two apps independent – the map shows exactly the file the owner chose.

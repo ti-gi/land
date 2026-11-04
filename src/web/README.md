@@ -41,7 +41,8 @@ Google Maps logo from Google's brand resources.
 
 ## Land for sale (DataFetch listings)
 
-DataFetch writes `data/listings/listings-nekretnine.json` (repository root), which this server reads directly
+Copy DataFetch's results (`data/listings/listings-nekretnine.json` at the repository root) to
+`data/listings-nekretnine.json` in this folder (git-ignored) – the server reads it from there
 (another file: set `LISTINGS_FILE` in `.env`). The map then shows
 building land for sale in Zagreb as dark pins (one colour – the zone colours underneath carry the meaning):
 
@@ -52,7 +53,7 @@ building land for sale in Zagreb as dark pins (one colour – the zone colours u
 
 The "Land for sale" box in the left panel switches the layer, approximate pins and ads no longer
 listed on/off. Click a pin for the listing(s) there, a link to the ad, and the GUP zone and its rules at that point.
-The server re-reads the file when it changes – after a new DataFetch run just reload the page.
+The server re-reads the file when it changes – after copying a new one in, just reload the page.
 `GET /api/listings` returns the pins as GeoJSON.
 
 ## What it does
@@ -91,7 +92,7 @@ public/zone-styles.js  Zone colours and names
 public/style.css       Styling
 ../../data/gup/zones.geojson   Zone polygons (WGS84, ~13 MB, ~3 MB gzipped download) – made by tools/gup-extract
 ../../data/gup/rules.json      Permitted uses per zone code – made by tools/gup-extract
-../../data/listings/           Listings collected by DataFetch (git-ignored)
+data/listings-nekretnine.json  Listings, copied in by hand from DataFetch (git-ignored)
 ```
 
 ## Data notes

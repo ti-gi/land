@@ -197,7 +197,7 @@ function buildListingsLegend() {
   $('legend-panel').hidden = false;
   const meta = listings.meta || {};
   if (meta.missing) {
-    $('listings-body').innerHTML = `<p class="legend-foot">No listings yet – run DataFetch (<code>src/DataFetch</code>); it writes <code>${esc(meta.missing)}</code>. Then reload.</p>`;
+    $('listings-body').innerHTML = `<p class="legend-foot">No listings yet – copy DataFetch's <b>listings-nekretnine.json</b> to <code>${esc(meta.missing)}</code> and reload.</p>`;
     $('listings-on').disabled = true;
     return;
   }

@@ -6,7 +6,7 @@ added, renamed or changes meaning, update this document, the producer, the consu
 ```
 tools/gup-extract ──► data/gup/zones.geojson ─┐
                   └─► data/gup/rules.json ────┼─► src/web (server.js → /api/zone, /data/zones.geojson)
-src/DataFetch ──────► data/listings/listings-nekretnine.json ─► src/web (server.js → /api/listings)
+src/DataFetch ──────► data/listings/listings-nekretnine.json ── copied by hand ──► src/web/data/listings-nekretnine.json ─► src/web (server.js → /api/listings)
               └─────► data/listings/listings-njuskalo.json     (not used by the map yet)
 ```
 
@@ -14,7 +14,8 @@ src/DataFetch ──────► data/listings/listings-nekretnine.json ─�
 |---|---|---|---|
 | `data/gup/zones.geojson` | yes | `tools/gup-extract/extract_zones.py` | `src/web` |
 | `data/gup/rules.json` | yes | `tools/gup-extract/build_rules.py` | `src/web` |
-| `data/listings/listings-nekretnine.json` | **no** | DataFetch, source `nekretnine` | `src/web` |
+| `data/listings/listings-nekretnine.json` | **no** | DataFetch, source `nekretnine` | the owner (copies it to `src/web/data/`) |
+| `src/web/data/listings-nekretnine.json` | **no** | copied by hand | `src/web` |
 | `data/listings/listings-njuskalo.json` | **no** | DataFetch, source `njuskalo` | – |
 | `data/datafetch/snapshots/`, `data/datafetch/browser-profile/` | **no** | DataFetch | people (debugging) |
 
@@ -69,7 +70,7 @@ Extra entries `GROBLJE`, `KPRP`, `KPRD` exist in the text but not as map codes.
 
 ---
 
-## `data/listings/listings-nekretnine.json`
+## `listings-nekretnine.json` (`data/listings/`, copy in `src/web/data/`)
 
 ```jsonc
 {
